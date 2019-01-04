@@ -86,7 +86,7 @@ module ddr3_controller_tb;
 	rst = 1;
 
 	#10 rst = 0;
-	#20000 $finish;
+	#5000 $finish;
     end
     always #1.25 clk = ~clk;
     always @(clk)
