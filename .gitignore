@@ -1,4 +1,6 @@
-DDR3 SDRAM Verilog Model
 *~
 *.vcd
 tb
+*.json
+*_out.config
+manufacturer
