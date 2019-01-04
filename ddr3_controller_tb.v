@@ -83,9 +83,9 @@ module ddr3_controller_tb;
 	$dumpfile("dump.vcd");
 	$dumpvars;
 	clk = 0;
-	rst = 1;
+	rst = 0;
 
-	#10 rst = 0;
+	#10 rst = 1;
 	#5000 $finish;
     end
     always #1.25 clk = ~clk;

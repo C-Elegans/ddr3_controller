@@ -45,7 +45,6 @@ module ddr3_controller(/*AUTOARG*/
       IDLE = 9;
     reg [5:0] //auto enum state
 	      state;
-    initial state = RESET;
     localparam //auto enum cmd
       CMD_MRS = 3'b000,
       CMD_REF = 3'b001,
@@ -74,8 +73,8 @@ module ddr3_controller(/*AUTOARG*/
 
 	
 
-    always @(posedge clk) begin
-	if(rst == 1) begin
+    always @(posedge clk or negedge rst) begin
+	if(rst == 0) begin
 	    state <= RESET;
 	    /*AUTORESET*/
 	    // Beginning of autoreset for uninitialized flops
