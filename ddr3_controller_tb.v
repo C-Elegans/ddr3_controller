@@ -1,4 +1,4 @@
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 // `define sg107
 // `define x16
@@ -8,11 +8,12 @@ module ddr3_controller_tb;
     /*AUTOREGINPUT*/
     // Beginning of automatic reg inputs (for undeclared instantiated-module inputs)
     reg			clk;			// To controller of ddr3_controller.v
+    reg			clk_90;			// To controller of ddr3_controller.v
     reg			rst;			// To controller of ddr3_controller.v
     // End of automatics
     /*AUTOWIRE*/
     // Beginning of automatic wires (for undeclared instantiated-module outputs)
-    wire [12:0]		ADDR;			// From controller of ddr3_controller.v
+    wire [13:0]		ADDR;			// From controller of ddr3_controller.v
     wire [2:0]		BA;			// From controller of ddr3_controller.v
     wire		CAS_N;			// From controller of ddr3_controller.v
     wire		CK;			// From controller of ddr3_controller.v
@@ -42,7 +43,7 @@ module ddr3_controller_tb;
 			       .CAS_N		(CAS_N),
 			       .WE_N		(WE_N),
 			       .BA		(BA[2:0]),
-			       .ADDR		(ADDR[12:0]),
+			       .ADDR		(ADDR[13:0]),
 			       .ODT		(ODT),
 			       // Inouts
 			       .DM_TDQS		(DM_TDQS[1:0]),
@@ -52,6 +53,7 @@ module ddr3_controller_tb;
 			       // Inputs
 			       .TDQS_N		(TDQS_N[DQS_BITS-1:0]),
 			       .clk		(clk),
+			       .clk_90		(clk_90),
 			       .rst		(rst));
 
     ddr3 mem(
@@ -84,9 +86,11 @@ module ddr3_controller_tb;
 	rst = 1;
 
 	#10 rst = 0;
-	#2000 $finish;
+	#20000 $finish;
     end
-    always #125 clk = ~clk;
+    always #1.25 clk = ~clk;
+    always @(clk)
+      #0.063 clk_90 <= clk;
       
 	  
 	
