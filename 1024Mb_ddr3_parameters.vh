@@ -674,7 +674,7 @@ function valid_cl;
     endcase
 endfunction
 
-`ifndef YOSYS
+`ifdef SIM
 // find the minimum valid cas write latency
 function [3:0] min_cwl;
     input period;
