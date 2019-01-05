@@ -7,9 +7,12 @@ module ddr3_controller_tb;
  `include "1024Mb_ddr3_parameters.vh"
     /*AUTOREGINPUT*/
     // Beginning of automatic reg inputs (for undeclared instantiated-module inputs)
+    reg [23:0]		addr_in;		// To controller of ddr3_controller.v
     reg			clk;			// To controller of ddr3_controller.v
-    reg			clk_90;			// To controller of ddr3_controller.v
+    reg [63:0]		data_in;		// To controller of ddr3_controller.v
+    reg			rd_req;			// To controller of ddr3_controller.v
     reg			rst;			// To controller of ddr3_controller.v
+    reg			wr_req;			// To controller of ddr3_controller.v
     // End of automatics
     /*AUTOWIRE*/
     // Beginning of automatic wires (for undeclared instantiated-module outputs)
@@ -17,18 +20,20 @@ module ddr3_controller_tb;
     wire [2:0]		BA;			// From controller of ddr3_controller.v
     wire		CAS_N;			// From controller of ddr3_controller.v
     wire		CK;			// From controller of ddr3_controller.v
-    wire		CKE;			// From controller of ddr3_controller.v
+    wire [0:0]		CKE;			// From controller of ddr3_controller.v
     wire		CK_N;			// From controller of ddr3_controller.v
-    wire		CS_N;			// From controller of ddr3_controller.v
+    wire [0:0]		CS_N;			// From controller of ddr3_controller.v
     wire [DM_BITS-1:0]	DM_TDQS;		// To/From controller of ddr3_controller.v, ...
     wire [DQ_BITS-1:0]	DQ;			// To/From controller of ddr3_controller.v, ...
     wire [DQS_BITS-1:0]	DQS;			// To/From controller of ddr3_controller.v, ...
     wire [DQS_BITS-1:0]	DQS_N;			// To/From controller of ddr3_controller.v, ...
-    wire		ODT;			// From controller of ddr3_controller.v
+    wire [0:0]		ODT;			// From controller of ddr3_controller.v
     wire		RAS_N;			// From controller of ddr3_controller.v
     wire		RST_N;			// From controller of ddr3_controller.v
     wire [DQS_BITS-1:0]	TDQS_N;			// From mem of ddr3.v
     wire		WE_N;			// From controller of ddr3_controller.v
+    wire		controller_ready;	// From controller of ddr3_controller.v
+    wire [63:0]		data_out;		// From controller of ddr3_controller.v
     // End of automatics
 
     
@@ -37,14 +42,16 @@ module ddr3_controller_tb;
 			       .RST_N		(RST_N),
 			       .CK		(CK),
 			       .CK_N		(CK_N),
-			       .CKE		(CKE),
-			       .CS_N		(CS_N),
+			       .CKE		(CKE[0:0]),
+			       .CS_N		(CS_N[0:0]),
 			       .RAS_N		(RAS_N),
 			       .CAS_N		(CAS_N),
 			       .WE_N		(WE_N),
 			       .BA		(BA[2:0]),
 			       .ADDR		(ADDR[13:0]),
-			       .ODT		(ODT),
+			       .ODT		(ODT[0:0]),
+			       .data_out	(data_out[63:0]),
+			       .controller_ready(controller_ready),
 			       // Inouts
 			       .DM_TDQS		(DM_TDQS[1:0]),
 			       .DQ		(DQ[15:0]),
@@ -53,8 +60,11 @@ module ddr3_controller_tb;
 			       // Inputs
 			       .TDQS_N		(TDQS_N[DQS_BITS-1:0]),
 			       .clk		(clk),
-			       .clk_90		(clk_90),
-			       .rst		(rst));
+			       .rst		(rst),
+			       .data_in		(data_in[63:0]),
+			       .addr_in		(addr_in[23:0]),
+			       .wr_req		(wr_req),
+			       .rd_req		(rd_req));
 
     ddr3 mem(
 	     // Outputs
@@ -86,11 +96,21 @@ module ddr3_controller_tb;
 	rst = 0;
 
 	#10 rst = 1;
-	#5000 $finish;
+	#8000 $finish;
     end
+    initial begin
+	@(posedge controller_ready)
+	wr_req <= 1;
+	addr_in <= 24'hdebeef;
+	data_in <= 64'h0123456789abcdef;
+	@(negedge controller_ready)
+	  wr_req <= 0;
+    end
+    
+    
     always #1.25 clk = ~clk;
-    always @(clk)
-      #0.063 clk_90 <= clk;
+    // always @(clk)
+    //   #0.063 clk_90 <= clk;
       
 	  
 	

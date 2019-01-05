@@ -26,7 +26,6 @@ module top(/*AUTOARG*/
     output 		 ODT;
     
     wire 		 clk;
-    assign clk_90 = clk;
 
     pll pll(
 	    // Outputs
@@ -54,7 +53,6 @@ module top(/*AUTOARG*/
 			       // Inputs
 			       .TDQS_N		(TDQS_N[DQS_BITS-1:0]),
 			       .clk		(clk),
-			       .clk_90		(clk_90),
 			       .rst		(rst));
 
 
